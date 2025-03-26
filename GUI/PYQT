@@ -1,0 +1,28 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Mar 26 15:28:11 2025
+
+@author: lexma
+"""
+
+from PyQt5.QtWidgets import QApplication, QMainWindow
+from matplotlib.figure import Figure
+from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
+
+class MyApp(QMainWindow):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle('Matplotlib with PyQt')
+        self.setGeometry(100, 100, 100, 100)
+
+        fig = Figure()
+        ax = fig.add_subplot(111)
+        ax.plot([1, 2, 3], [1, 4, 9])  # Example data
+
+        canvas = FigureCanvas(fig)
+        self.setCentralWidget(canvas)
+
+app = QApplication([])
+win = MyApp()
+win.show()
+app.exec_()
