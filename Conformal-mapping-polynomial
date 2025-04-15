@@ -1,0 +1,59 @@
+#Conformal mapping that visualises a map as it transitions from z^2 to z^1/2
+
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import tkinter as tk
+
+# Define the powers for the plots from z^2 to z^1/2 in increments of 1/12
+powers = [2 - i/12 for i in range(25)] + [1 - i/12 for i in range(13)] + [0.5 + i/12 for i in range(13)]
+
+# Function to create a plot for a given power
+def create_plot(power):
+    x = np.linspace(-2, 2, 200)
+    y = np.linspace(-2, 2, 200)
+    X, Y = np.meshgrid(x, y)
+    Z = X + 1j * Y
+    W = Z ** power
+
+    phi, psi = np.real(W), np.imag(W)
+
+    fig, ax = plt.subplots(figsize=(5, 5))
+    ax.contour(X, Y, phi, levels=15, colors='r', linestyles='solid', alpha=0.7)
+    ax.contour(X, Y, psi, levels=15, colors='b', linestyles='solid', alpha=0.7)
+    ax.set_title(r'$w(z) = z^{%.2f}$' % power)
+    ax.set_xlabel('x (Re z)')
+    ax.set_ylabel('y (Im z)')
+    ax.axhline(0, color='k', lw=1, linestyle='--')
+    ax.axvline(0, color='k', lw=1, linestyle='--')
+    ax.grid(True)
+
+    return fig
+
+# Tkinter application
+class PlotApp:
+    def __init__(self, master):
+        self.master = master
+        self.master.title("Complex Mapping Visualization")
+
+        self.current_index = 0
+        self.fig = create_plot(powers[self.current_index])
+        self.canvas = FigureCanvasTkAgg(self.fig, master=self.master)
+        self.canvas.get_tk_widget().pack()
+
+        # Slider for navigation
+        self.slider = tk.Scale(master, from_=0, to=len(powers)-1, orient=tk.HORIZONTAL, command=self.update_plot)
+        self.slider.pack()
+
+    def update_plot(self, value):
+        self.current_index = int(value)
+        plt.close(self.fig)
+        self.fig = create_plot(powers[self.current_index])
+        self.canvas.figure = self.fig
+        self.canvas.draw()
+
+# Run the application
+if __name__ == "__main__":
+    root = tk.Tk()
+    app = PlotApp(root)
+    root.mainloop()
