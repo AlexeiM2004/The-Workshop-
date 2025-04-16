@@ -1,0 +1,42 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Wed Apr 16 12:17:30 2025
+
+@author: lexma
+"""
+
+#models the streamlines of a source in a uniform flow
+
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Parameters
+U = 5.0          # Uniform flow speed
+Q = 5.0          # Source strength
+
+# Grid
+x = np.linspace(-5, 5, 200)
+y = np.linspace(-5, 5, 200)
+X, Y = np.meshgrid(x, y)
+Z = X + 1j*Y
+
+# Complex potential (avoid log(0))
+W = U * Z + (Q / (2 * np.pi)) * np.log(np.where(np.abs(Z) < 1e-10, 1e-10, Z))
+psi = np.imag(W)
+
+# Stagnation point (dw/dz = 0)
+z_stag = -Q / (2 * np.pi * U)
+x_stag, y_stag = np.real(z_stag), np.imag(z_stag)
+
+# Plot
+plt.figure(figsize=(10, 8))
+plt.contour(X, Y, psi, levels=30, colors='blue', linewidths=0.8)
+plt.scatter(0, 0, color='red', s=50, label='Source')
+plt.scatter(x_stag, y_stag, color='black', s=100, label='Stagnation Point')
+plt.xlabel('x')
+plt.ylabel('y')
+plt.title(f'Source (Q={Q}) in Uniform Flow (U={U})')
+plt.legend()
+plt.grid(True)
+plt.axis('equal')
+plt.show()
