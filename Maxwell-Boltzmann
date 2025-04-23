@@ -1,0 +1,45 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Constants
+m = 1.0  # mass of the particle (arbitrary units)
+k = 1.0  # Boltzmann constant (arbitrary units)
+T = 1.0  # temperature (arbitrary units)
+
+# Maxwell-Boltzmann distribution function
+def maxwell_boltzmann(v, m, k, T):
+    coeff = (m / (2 * np.pi * k * T))**(3/2) * 4 * np.pi * v**2
+    exponent = np.exp(-m * v**2 / (2 * k * T))
+    return coeff * exponent
+
+# Speeds
+v = np.linspace(0, 5, 1000)
+f_v = maxwell_boltzmann(v, m, k, T)
+
+# Calculating speeds
+v_most_probable = np.sqrt(2 * k * T / m)  # Most probable speed
+v_mean = np.sqrt(8 * k * T / (np.pi * m))  # Mean speed
+v_rms = np.sqrt(3 * k * T / m)  # Root mean square speed
+
+# Plotting
+plt.figure(figsize=(10, 6))
+plt.plot(v, f_v, label='Maxwell-Boltzmann Distribution', color='blue')
+plt.axvline(v_most_probable, color='orange', linestyle='--', label='Most Probable Speed')
+plt.axvline(v_mean, color='green', linestyle='--', label='Mean Speed')
+plt.axvline(v_rms, color='red', linestyle='--', label='Root Mean Speed')
+
+# Annotations for speeds
+plt.text(v_most_probable + 0.1, max(f_v) * 0.8, f'$v_{{mp}} = {v_most_probable:.2f}$', color='orange')
+plt.text(v_mean + 0.1, max(f_v) * 0.6, f'$\\langle v \\rangle = {v_mean:.2f}$', color='green')
+plt.text(v_rms + 0.1, max(f_v) * 0.4, f'$v_{{rms}} = {v_rms:.2f}$', color='red')
+
+# Adding equations to the graph
+plt.text(1.5, 0.1, r'$f(v) = \left(\frac{m}{2 \pi k T}\right)^{3/2} 4 \pi v^2 e^{-\frac{mv^2}{2kT}}$', fontsize=10, bbox=dict(facecolor='white', alpha=0.5))
+plt.title('Maxwell-Boltzmann Distribution')
+plt.xlabel('Speed (v)')
+plt.ylabel('Probability Density')
+plt.legend()
+plt.grid()
+plt.xlim(0, 5)
+plt.ylim(0, max(f_v) * 1.1)
+plt.show()
